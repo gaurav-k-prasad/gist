@@ -4,9 +4,12 @@
       "ssh": "Disabled",
       "previewLimit": 50,
       "server": "localhost",
+      "port": 5432,
+      "askForPassword": true,
       "driver": "PostgreSQL",
-      "connectString": "postgresql://postgres:greenwish@localhost:5432/gist",
-      "name": "gist"
+      "name": "gist",
+      "database": "gist",
+      "username": "postgres"
     }
   ]
 }

@@ -6,14 +6,14 @@ export const users = pgTable("users", {
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
 
-  rootFolderId: varchar("root_folder_id"),
+  rootFolderId: integer("root_folder_id"),
 });
 
 export const folders = pgTable("folders", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
 
-  userId: varchar("user_id").notNull(),
+  userId: integer("user_id").notNull(),
   parentFolder: integer("parent_folder"),
 });
 
