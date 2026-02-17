@@ -11,11 +11,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientSecret: process.env.GITHUB_SECRET,
     }),
   ],
+
+  session: {
+    strategy: "jwt",
+  },
+
   callbacks: {
-    async session({ session, token }) {
-      if (session.user && token.sub) {
-        session.user.id = token.sub;
+    async jwt({ token, user }) {
+      if (user && user.email) {
+        // Available only when signin and signup and not during update
+        const dbUser = await db.query.users.findFirst({
+          where: { email: user.email },
+        });
+
+        if (dbUser) {
+          token.dbId = dbUser.id;
+          token.rootFolderId = dbUser.rootFolderId;
+        }
       }
+
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.dbId = token.dbId as number;
+        session.user.rootFolderId = token.rootFolderId as number;
+      }
+
       return session;
     },
 

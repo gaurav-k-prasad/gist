@@ -28,7 +28,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
-, "test.js"  ],
+    "**/*.mts",
+    "types/next-auth.d.ts",
+    "test.js"
+  ],
   "exclude": ["node_modules"]
 }

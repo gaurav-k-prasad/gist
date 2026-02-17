@@ -11,7 +11,13 @@ export default function GitHubLogin() {
       onClick={() => signIn("github")}
       className="flex items-center gap-2"
     >
-      <Image src="/github.svg" alt="GitHub Logo" width={20} height={20} loading="eager" />
+      <Image
+        src="/github.svg"
+        alt="GitHub Logo"
+        width={20}
+        height={20}
+        loading="eager"
+      />
       Continue with GitHub
     </Button>
   );

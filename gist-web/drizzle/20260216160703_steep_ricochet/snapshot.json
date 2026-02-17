@@ -2,9 +2,7 @@
   "version": "8",
   "dialect": "postgres",
   "id": "7d33491d-648e-4354-8c8c-16032ff5617c",
-  "prevIds": [
-    "1b6b608e-eb83-4e3d-b703-5d0b63a12d9a"
-  ],
+  "prevIds": ["1b6b608e-eb83-4e3d-b703-5d0b63a12d9a"],
   "ddl": [
     {
       "isRlsEnabled": false,
@@ -234,9 +232,7 @@
       "table": "users"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "files_pkey",
       "schema": "public",
@@ -244,9 +240,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "folders_pkey",
       "schema": "public",
@@ -254,9 +248,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "users_pkey",
       "schema": "public",
@@ -265,9 +257,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "email"
-      ],
+      "columns": ["email"],
       "nullsNotDistinct": false,
       "name": "users_email_key",
       "schema": "public",
