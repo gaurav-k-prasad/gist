@@ -1,2 +1,0 @@
-ALTER TABLE "folders" ALTER COLUMN "user_id" SET DATA TYPE integer USING "user_id"::integer;--> statement-breakpoint
-ALTER TABLE "users" ALTER COLUMN "root_folder_id" SET DATA TYPE integer USING "root_folder_id"::integer;

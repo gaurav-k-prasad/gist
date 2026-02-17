@@ -68,7 +68,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 await tx
                   .insert(folders)
                   .values({
-                    name: "root",
+                    name: newUser.name,
+                    path: newUser.name,
                     userId: newUser.id,
                     parentFolder: null,
                   })

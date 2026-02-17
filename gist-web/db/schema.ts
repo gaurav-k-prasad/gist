@@ -12,6 +12,7 @@ export const users = pgTable("users", {
 export const folders = pgTable("folders", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
+  path: varchar().notNull(),
 
   userId: integer("user_id").notNull(),
   parentFolder: integer("parent_folder"),
@@ -21,7 +22,7 @@ export const files = pgTable("files", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
   s3url: varchar().notNull(),
-  path: varchar(),
+  path: varchar().notNull(),
 
   folderId: integer("folder_id").notNull(),
   userId: integer("user_id").notNull(),
