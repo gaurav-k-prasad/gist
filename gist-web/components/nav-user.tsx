@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ChevronsUpDown, LogOut } from "lucide-react";
 import { User } from "next-auth";
+import { signOut } from "next-auth/react";
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar();
@@ -66,7 +67,9 @@ export function NavUser({ user }: { user: User }) {
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {
+              signOut({redirectTo: "/login"});
+            }}>
               <LogOut />
               Log out
             </DropdownMenuItem>
