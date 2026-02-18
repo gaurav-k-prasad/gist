@@ -26,6 +26,7 @@ export default function FolderDisplay({
                       width={512}
                       height={512}
                       className="w-full h-auto object-contain"
+                      loading="eager"
                     />
                   </div>
                   <div className="text-center text-xl text-nowrap overflow-hidden text-ellipsis w-full mt-2">
@@ -51,6 +52,7 @@ export default function FolderDisplay({
                     width={512}
                     height={512}
                     className="w-full h-auto object-contain"
+                    loading="eager"
                   />
                 </div>
                 <div className="text-center text-xl text-nowrap overflow-hidden text-ellipsis w-full mt-2">

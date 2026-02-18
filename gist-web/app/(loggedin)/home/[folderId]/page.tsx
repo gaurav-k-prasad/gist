@@ -3,6 +3,8 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import FolderBreadcrumbs from "@/components/folder-breadcrumbs";
 import FolderDisplay from "@/components/folder-display";
+import NewItemDropdown from "@/components/new-item-dropdown";
+import { Dialog } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -65,17 +67,28 @@ export default function Folder() {
 
   return (
     <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b">
-          <div className="flex items-center gap-2 px-3">
-            <SidebarTrigger />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <FolderBreadcrumbs currFolder={folderInfo} />
+      <Dialog>
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b">
+            <div className="flex items-center gap-2 px-3">
+              <SidebarTrigger />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <FolderBreadcrumbs currFolder={folderInfo} />
+            </div>
+          </header>
+          <FolderDisplay files={files} folders={folders} />
+          <div className="fixed max-md:right-5 right-10 max-md:bottom-5 bottom-10">
+            <NewItemDropdown
+              folderDetails={{
+                folderId: folderInfo?.id || -1,
+                folderName: folderInfo?.name || "Invalid",
+              }}
+              setFilesFolders={{ setFiles, setFolders }}
+            />
           </div>
-        </header>
-        <FolderDisplay files={files} folders={folders} />
-      </SidebarInset>
+        </SidebarInset>
+      </Dialog>
     </SidebarProvider>
   );
 }

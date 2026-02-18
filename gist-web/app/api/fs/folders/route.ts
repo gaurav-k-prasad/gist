@@ -9,6 +9,7 @@ export async function POST(req: NextRequest) {
   const data = await req.json();
 
   const { folderName, parentFolder } = data;
+  console.log(folderName, parentFolder);
 
   if (!folderName || !parentFolder) {
     return NextResponse.json(
@@ -89,15 +90,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await db.insert(folders).values({
-      name: folderName,
-      path: parentFolderData[0].path + "/" + folderName,
-      userId: user.user.dbId,
-      parentFolder: parentFolderId,
-      ancestorsIds: ancestors,
-    });
+    const newFolder = await db
+      .insert(folders)
+      .values({
+        name: folderName,
+        path: parentFolderData[0].path + "/" + folderName,
+        userId: user.user.dbId,
+        parentFolder: parentFolderId,
+        ancestorsIds: ancestors,
+      })
+      .returning();
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json(
+      { success: true, newFolder: newFolder[0] },
+      { status: 200 },
+    );
   } catch (e) {
     console.error(e);
     return NextResponse.json(
