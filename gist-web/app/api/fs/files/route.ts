@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { files } from "@/db/schema";
 import { db } from "@/utils/db";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";

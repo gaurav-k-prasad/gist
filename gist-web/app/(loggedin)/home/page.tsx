@@ -13,15 +13,15 @@ import {
 } from "@/components/ui/sidebar";
 import { useFilesFolders } from "@/hooks/useFilesFolders";
 import { Folder as FolderType } from "@/types/files-folders";
-import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function Folder() {
-  const folderId = useParams().folderId?.toString() as string;
   const { files, folders, setFiles, setFolders } = useFilesFolders();
   const [folderInfo, setFolderInfo] = useState<FolderType>();
-  const [map, setMap] = useState(new Map());
+  const { data: session, status } = useSession();
+  const [folderId, setFolderId] = useState<string>("");
 
   useEffect(() => {
     const f = async () => {
@@ -29,12 +29,11 @@ export default function Folder() {
       params.append("folderId", folderId);
 
       try {
-        const response = await fetch("/api/fs?" + params.toString(), {
+        const response = await fetch(`/api/fs?folderId=${folderId}`, {
           method: "GET",
         });
 
         const res = await response.json();
-        console.log(res);
         setFolders(res.data.folders);
         setFiles(res.data.files);
         setFolderInfo(res.data.currFolder);
@@ -52,7 +51,7 @@ export default function Folder() {
           {
             folderId: 1,
             id: 4,
-            name: "new file2lkasdjfks alksjdfklajs;dflkasjdf",
+            name: "new file2",
             path: "/path",
             s3url: "/s3",
             userId: 3,
@@ -62,8 +61,23 @@ export default function Folder() {
         toast.error("Data fetching failed");
       }
     };
-    f();
-  }, [folderId, setFolders, setFiles]);
+
+    if (status === "authenticated" && folderId.length > 0) {
+      f();
+    }
+  }, [folderId, setFolders, setFiles, status]);
+
+  useEffect(() => {
+    const rootId = session?.user?.rootFolderId;
+    if (status === "authenticated" && rootId !== undefined && rootId !== null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setFolderId(rootId.toString());
+    }
+  }, [status, session]);
+
+  if (status != "authenticated") {
+    return <></>;
+  }
 
   return (
     <SidebarProvider>
@@ -74,10 +88,17 @@ export default function Folder() {
             <div className="flex items-center gap-2 px-3">
               <SidebarTrigger />
               <Separator orientation="vertical" className="mr-2 h-4" />
-              <FolderBreadcrumbs currFolder={folderInfo} />
+              <FolderBreadcrumbs
+                currFolder={folderInfo}
+                setFolderId={setFolderId}
+              />
             </div>
           </header>
-          <FolderDisplay files={files} folders={folders} />
+          <FolderDisplay
+            files={files}
+            folders={folders}
+            setFolderId={setFolderId}
+          />
           <div className="fixed max-md:right-5 right-10 max-md:bottom-5 bottom-10">
             <NewItemDropdown
               folderDetails={{

@@ -1,5 +1,5 @@
 import { Folder as FolderType } from "@/types/files-folders";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,8 +11,10 @@ import {
 
 export default function FolderBreadcrumbs({
   currFolder,
+  setFolderId,
 }: {
   currFolder: FolderType | undefined;
+  setFolderId: Dispatch<SetStateAction<string>>;
 }) {
   if (!currFolder) {
     return <></>;
@@ -26,15 +28,18 @@ export default function FolderBreadcrumbs({
       ? currFolder.ancestorsIds.split("/")
       : [];
 
-  console.log(ancestorsIds);
-
   return (
     <Breadcrumb>
       <BreadcrumbList>
         {ancestorsNames.map((ancestor, i) => (
           <React.Fragment key={i}>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href={`/home/${ancestorsIds[i]}`}>
+              <BreadcrumbLink
+                onClick={() => {
+                  setFolderId(ancestorsIds[i]);
+                }}
+                className="cursor-pointer"
+              >
                 {ancestor}
               </BreadcrumbLink>
             </BreadcrumbItem>

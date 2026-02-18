@@ -83,7 +83,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 .where(eq(users.id, newUser.id));
             });
           }
-          console.log("existing", existingUser);
           return true;
         } catch (error) {
           console.error("Error saving user to database", error);

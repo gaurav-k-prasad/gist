@@ -9,7 +9,6 @@ export async function POST(req: NextRequest) {
   const data = await req.json();
 
   const { folderName, parentFolder } = data;
-  console.log(folderName, parentFolder);
 
   if (!folderName || !parentFolder) {
     return NextResponse.json(

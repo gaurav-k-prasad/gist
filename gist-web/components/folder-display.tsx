@@ -1,14 +1,16 @@
 import { File as FileType, Folder as FolderType } from "@/types/files-folders";
 import Image from "next/image";
-import Link from "next/link";
+import { Dispatch, SetStateAction } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 export default function FolderDisplay({
   files,
   folders,
+  setFolderId,
 }: {
   files: FileType[];
   folders: FolderType[];
+  setFolderId: Dispatch<SetStateAction<string>>;
 }) {
   return (
     <div className="grid p-5 gap-5 grid-cols-[repeat(auto-fill,minmax(150px,1fr))]">
@@ -16,7 +18,10 @@ export default function FolderDisplay({
       {folders.length > 0 &&
         folders.map((folder) => (
           <div key={folder.id} className="flex justify-center items-center">
-            <Link href={folder.id.toString()} className="w-full">
+            <div
+              onClick={() => setFolderId(folder.id.toString())}
+              className="w-full"
+            >
               <Tooltip>
                 <TooltipTrigger className="w-full flex justify-center items-center flex-col p-4 hover:bg-gray-100 rounded-lg transition-colors">
                   <div className="w-full max-w-30 aspect-square relative flex items-center justify-center">
@@ -35,7 +40,7 @@ export default function FolderDisplay({
                 </TooltipTrigger>
                 <TooltipContent side={"bottom"}>{folder.name}</TooltipContent>
               </Tooltip>
-            </Link>
+            </div>
           </div>
         ))}
 
