@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
       .from(folders)
       .where(and(eq(folders.userId, user.user.dbId), eq(folders.id, folderId)));
 
-    if (currentFolder.length == 0) {
+    if (currentFolder.length === 0) {
       return NextResponse.json(
         {
           success: false,

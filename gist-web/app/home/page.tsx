@@ -20,8 +20,10 @@ import { toast } from "sonner";
 export default function Folder() {
   const { files, folders, setFiles, setFolders } = useFilesFolders();
   const [folderInfo, setFolderInfo] = useState<FolderType>();
+  const [rootFolderInfo, setRootFolderInfo] = useState<FolderType>();
   const { data: session, status } = useSession();
   const [folderId, setFolderId] = useState<string>("");
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     const f = async () => {
@@ -37,6 +39,7 @@ export default function Folder() {
         setFolders(res.data.folders);
         setFiles(res.data.files);
         setFolderInfo(res.data.currFolder);
+        if (!rootFolderInfo) setRootFolderInfo(res.data.currFolder);
 
         // ! WARNING
         setFiles([
@@ -65,7 +68,7 @@ export default function Folder() {
     if (status === "authenticated" && folderId.length > 0) {
       f();
     }
-  }, [folderId, setFolders, setFiles, status]);
+  }, [folderId, setFolders, setFiles, status, rootFolderInfo]);
 
   useEffect(() => {
     const rootId = session?.user?.rootFolderId;
@@ -82,7 +85,12 @@ export default function Folder() {
   return (
     <SidebarProvider>
       <Dialog>
-        <AppSidebar />
+        <AppSidebar
+          folderInfo={rootFolderInfo}
+          folders={folders}
+          files={files}
+          currFolderId={folderId}
+        />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 border-b">
             <div className="flex items-center gap-2 px-3">

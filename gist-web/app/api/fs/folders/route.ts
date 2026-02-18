@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       folder,
     ]);
 
-    if (parentFolderData.length == 0) {
+    if (parentFolderData.length === 0) {
       return NextResponse.json(
         {
           success: false,

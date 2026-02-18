@@ -1,0 +1,136 @@
+import { useFilesFolders } from "@/hooks/useFilesFolders";
+import { File as FileType, Folder as FolderType } from "@/types/files-folders";
+import { ChevronRight, File, Folder } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./collapsible";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+} from "./sidebar";
+
+export default function SidebarFolder({
+  folderInfo,
+  currFolders,
+  currFiles,
+  currFolderId,
+}: {
+  folderInfo?: FolderType;
+  currFolders: FolderType[];
+  currFiles: FileType[];
+  currFolderId: string;
+}) {
+  const { files, folders, setFiles, setFolders } = useFilesFolders();
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const f = async () => {
+      const params = new URLSearchParams();
+      params.append("folderId", folderInfo?.id.toString() as string);
+
+      try {
+        const response = await fetch(`/api/fs?` + params.toString(), {
+          method: "GET",
+        });
+
+        const res = await response.json();
+        setFolders(res.data.folders);
+        setFiles(res.data.files);
+
+        // ! WARNING
+        setFiles([
+          {
+            folderId: 1,
+            id: 3,
+            name: "new file",
+            path: "/path",
+            s3url: "/s3",
+            userId: 3,
+          },
+          {
+            folderId: 1,
+            id: 4,
+            name: "new file2",
+            path: "/path",
+            s3url: "/s3",
+            userId: 3,
+          },
+        ]);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    if (isOpen) {
+      f();
+    }
+  }, [isOpen, setFolders, setFiles, folderInfo]);
+
+  useEffect(() => {
+    if (folderInfo && folderInfo.id.toString() === currFolderId) {
+      setFolders(currFolders);
+      setFiles(currFiles);
+    }
+  }, [currFiles, currFolders, folderInfo, currFolderId, setFolders, setFiles]);
+
+  if (!folderInfo) {
+    return <>Loading...</>;
+  }
+
+  return (
+    <SidebarMenu>
+      <Collapsible
+        asChild
+        className="group/collapsible"
+        onOpenChange={(open) => setIsOpen(open)}
+      >
+        <SidebarMenuItem>
+          <CollapsibleTrigger asChild>
+            <SidebarMenuButton tooltip={folderInfo?.name}>
+              <Folder />
+              <span>{folderInfo.name}</span>
+              <ChevronRight
+                className={`ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:${isOpen && "rotate-90"}`}
+              />
+            </SidebarMenuButton>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <SidebarMenuSub className="mr-0 pr-0">
+              {folders.map((subItem) => {
+                return (
+                  <SidebarFolder
+                    key={subItem.id + "-folder"}
+                    folderInfo={subItem}
+                    currFiles={currFiles}
+                    currFolders={currFolders}
+                    currFolderId={currFolderId}
+                  />
+                );
+              })}
+
+              {files.map((subItem) => (
+                <SidebarMenuSubItem key={subItem.id + "-file"}>
+                  <SidebarMenuSubButton asChild>
+                    <div>
+                      <File />
+                      <a href={subItem.s3url}>
+                        <span>{subItem.name}</span>
+                      </a>
+                    </div>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              ))}
+            </SidebarMenuSub>
+          </CollapsibleContent>
+        </SidebarMenuItem>
+      </Collapsible>
+    </SidebarMenu>
+  );
+}
