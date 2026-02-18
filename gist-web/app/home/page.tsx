@@ -23,7 +23,6 @@ export default function Folder() {
   const [rootFolderInfo, setRootFolderInfo] = useState<FolderType>();
   const { data: session, status } = useSession();
   const [folderId, setFolderId] = useState<string>("");
-  const [count, setCount] = useState(0);
 
   useEffect(() => {
     const f = async () => {

@@ -29,9 +29,11 @@ export default function SidebarFolder({
 }) {
   const { files, folders, setFiles, setFolders } = useFilesFolders();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const f = async () => {
+      setIsLoading(true);
       const params = new URLSearchParams();
       params.append("folderId", folderInfo?.id.toString() as string);
 
@@ -65,6 +67,8 @@ export default function SidebarFolder({
         ]);
       } catch (e) {
         console.error(e);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -74,11 +78,27 @@ export default function SidebarFolder({
   }, [isOpen, setFolders, setFiles, folderInfo]);
 
   useEffect(() => {
-    if (folderInfo && folderInfo.id.toString() === currFolderId) {
+    if (
+      (currFolders.length !== folders.length ||
+        currFiles.length !== files.length) &&
+      folderInfo &&
+      folderInfo.id.toString() === currFolderId &&
+      !isLoading
+    ) {
       setFolders(currFolders);
       setFiles(currFiles);
     }
-  }, [currFiles, currFolders, folderInfo, currFolderId, setFolders, setFiles]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currFiles,
+    currFolders,
+    folderInfo,
+    setFolders,
+    setFiles,
+    files.length,
+    folders.length,
+    isLoading,
+  ]);
 
   if (!folderInfo) {
     return <>Loading...</>;
@@ -89,15 +109,19 @@ export default function SidebarFolder({
       <Collapsible
         asChild
         className="group/collapsible"
-        onOpenChange={(open) => setIsOpen(open)}
+        onOpenChange={(open) => {
+          setIsOpen(open);
+        }}
       >
         <SidebarMenuItem>
-          <CollapsibleTrigger asChild>
+          <CollapsibleTrigger asChild className="w-full overflow-hidden">
             <SidebarMenuButton tooltip={folderInfo?.name}>
               <Folder />
-              <span>{folderInfo.name}</span>
+              <span className="w-full overflow-hidden text-ellipsis">
+                {folderInfo.name}
+              </span>
               <ChevronRight
-                className={`ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:${isOpen && "rotate-90"}`}
+                className={`ml-auto transition-transform duration-200 ${isOpen && "rotate-90!"}`}
               />
             </SidebarMenuButton>
           </CollapsibleTrigger>
