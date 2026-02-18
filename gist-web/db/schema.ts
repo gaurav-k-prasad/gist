@@ -16,6 +16,9 @@ export const folders = pgTable("folders", {
 
   userId: integer("user_id").notNull(),
   parentFolder: integer("parent_folder"),
+
+  // Stores ids of ancestors in form of string "32/44/234/23"
+  ancestorsIds: varchar("ancestors_ids").notNull(),
 });
 
 export const files = pgTable("files", {

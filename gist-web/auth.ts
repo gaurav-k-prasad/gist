@@ -72,6 +72,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     path: newUser.name,
                     userId: newUser.id,
                     parentFolder: null,
+                    ancestorsIds: "", // no ancestors
                   })
                   .returning()
               )[0];

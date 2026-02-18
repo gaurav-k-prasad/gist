@@ -71,6 +71,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    let ancestors = "";
+    if (parentFolderData[0].ancestorsIds.length > 0) {
+      ancestors = parentFolderData[0].ancestorsIds + "/";
+    }
+    ancestors += parentFolderId.toString();
+
     if (folderExists.length > 0) {
       return NextResponse.json(
         {
@@ -88,10 +94,12 @@ export async function POST(req: NextRequest) {
       path: parentFolderData[0].path + "/" + folderName,
       userId: user.user.dbId,
       parentFolder: parentFolderId,
+      ancestorsIds: ancestors,
     });
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch {
+  } catch (e) {
+    console.error(e);
     return NextResponse.json(
       { success: false, message: "Error creating folder" },
       { status: 500 },

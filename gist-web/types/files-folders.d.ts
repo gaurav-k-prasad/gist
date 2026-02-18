@@ -13,4 +13,5 @@ export interface Folder {
   path: string;
   userId: number;
   parentFolder: number?;
+  ancestorsIds: string;
 }
