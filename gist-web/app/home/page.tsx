@@ -72,10 +72,10 @@ export default function Folder() {
   useEffect(() => {
     const rootId = session?.user?.rootFolderId;
     if (status === "authenticated" && rootId !== undefined && rootId !== null) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFolderId(rootId.toString());
     }
-  }, [status, session]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   if (status != "authenticated") {
     return <></>;

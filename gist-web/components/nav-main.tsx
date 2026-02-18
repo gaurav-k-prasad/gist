@@ -16,7 +16,7 @@ export function NavMain({
   currFolderId: string
 }) {
   return (
-    <SidebarGroup>
+    <SidebarGroup className="pt-5">
       <SidebarFolder
         folderInfo={folderInfo}
         currFiles={files}
