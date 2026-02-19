@@ -15,6 +15,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "./sidebar";
+import Link from "next/link";
 
 export default function SidebarFolder({
   folderInfo,
@@ -45,26 +46,6 @@ export default function SidebarFolder({
         const res = await response.json();
         setFolders(res.data.folders);
         setFiles(res.data.files);
-
-        // ! WARNING
-        setFiles([
-          {
-            folderId: 1,
-            id: 3,
-            name: "new file",
-            path: "/path",
-            s3url: "/s3",
-            userId: 3,
-          },
-          {
-            folderId: 1,
-            id: 4,
-            name: "new file2",
-            path: "/path",
-            s3url: "/s3",
-            userId: 3,
-          },
-        ]);
       } catch (e) {
         console.error(e);
       } finally {
@@ -144,9 +125,9 @@ export default function SidebarFolder({
                   <SidebarMenuSubButton asChild>
                     <div>
                       <File />
-                      <a href={subItem.s3url}>
+                      <Link href={subItem.s3url}>
                         <span>{subItem.name}</span>
-                      </a>
+                      </Link>
                     </div>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>

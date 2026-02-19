@@ -1,17 +1,18 @@
 import { auth } from "@/auth";
+import { files, folders } from "@/db/schema";
 import { db } from "@/utils/db";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-// Create file
+// Create files
 export async function POST(req: NextRequest) {
   const data = await req.json();
 
-  const { folderName, parentFolder } = data;
+  const { filesDetails, parentFolder } = data;
 
-  if (!folderName || !parentFolder) {
+  if (!filesDetails || !parentFolder) {
     return NextResponse.json(
-      { success: false, message: "Folder name or Parent Folder missing" },
+      { success: false, message: "Folder names or Parent Folder missing" },
       { status: 400 },
     );
   }
@@ -34,31 +35,30 @@ export async function POST(req: NextRequest) {
 
   try {
     // Find if there exists the parent folder
-    const parentFolder = db
+    const parentFolderP = db
       .select()
       .from(folders)
       .where(
         and(eq(folders.userId, user.user.dbId), eq(folders.id, parentFolderId)),
       );
 
-    // Find if there already exists a folder with same name
-    const folder = db
+    // Fetch all the files in current folder to see if there is any other file with same name
+    const parentFilesP = db
       .select()
-      .from(folders)
+      .from(files)
       .where(
         and(
-          eq(folders.userId, user.user.dbId),
-          eq(folders.name, folderName),
-          eq(folders.parentFolder, parentFolderId),
+          eq(files.userId, user.user.dbId),
+          eq(files.folderId, parentFolderId),
         ),
       );
 
-    const [parentFolderExists, folderExists] = await Promise.all([
-      parentFolder,
-      folder,
+    const [parentFolder, parentFiles] = await Promise.all([
+      parentFolderP,
+      parentFilesP,
     ]);
 
-    if (parentFolderExists.length === 0) {
+    if (parentFolder.length === 0) {
       return NextResponse.json(
         {
           success: false,
@@ -70,29 +70,40 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (folderExists.length > 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Folder already exists",
-        },
-        {
-          status: 400,
-        },
-      );
+    // Checking if current file name exists in folder already
+    const uploadFilesSet = new Set<string>();
+    for (const { name } of filesDetails) {
+      uploadFilesSet.add(name);
     }
 
-    await db.insert(folders).values({
-      path,
-      name: folderName,
-      userId: user.user.dbId,
-      parentFolder: parentFolderId,
-    });
+    for (const { name } of parentFiles) {
+      if (uploadFilesSet.has(name)) {
+        return NextResponse.json({
+          success: false,
+          message: "File already exists with same name",
+        });
+      }
+    }
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    type FileInsertType = typeof files.$inferInsert;
+    const insertValues: FileInsertType[] = [];
+
+    for (const fileDetail of filesDetails) {
+      insertValues.push({
+        folderId: parentFolderId,
+        name: fileDetail.name,
+        path: parentFolder[0].ancestorsIds + "/" + parentFolderId.toString(),
+        s3url: fileDetail.s3url,
+        userId: user.user.dbId,
+      });
+    }
+
+    const data = await db.insert(files).values(insertValues).returning();
+
+    return NextResponse.json({ success: true, data }, { status: 200 });
   } catch {
     return NextResponse.json(
-      { success: false, message: "Error creating folder" },
+      { success: false, message: "Error uploading files" },
       { status: 500 },
     );
   }

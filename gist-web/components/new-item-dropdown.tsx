@@ -10,23 +10,26 @@ import {
 import { File as FileType, Folder as FolderType } from "@/types/files-folders";
 import { File, Folder, Plus } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
+import CreateFolder from "./ui/create-folder";
 import { DialogContent, DialogTrigger } from "./ui/dialog";
-import { CreateFolder } from "./ui/dialog-forms";
+import FileUpload from "./ui/file-upload";
 
 export default function NewItemDropdown({
   folderDetails,
   setFilesFolders,
+  dialogOpen,
 }: {
   folderDetails: {
     folderName: string;
     folderId: number;
+    parentFiles: FileType[];
   };
   setFilesFolders: {
     setFiles: Dispatch<SetStateAction<FileType[]>>;
     setFolders: Dispatch<SetStateAction<FolderType[]>>;
   };
+  dialogOpen: Dispatch<SetStateAction<boolean>>;
 }) {
-
   const [create, setCreate] = useState(
     <CreateFolder
       folderDetails={folderDetails}
@@ -72,13 +75,23 @@ export default function NewItemDropdown({
 
           <DropdownMenuSeparator />
 
-          <DialogTrigger className="w-full">
+          <DialogTrigger
+            className="w-full"
+            onClick={() =>
+              setCreate(
+                <FileUpload
+                  folderDetails={folderDetails}
+                  setFiles={setFilesFolders.setFiles}
+                  dialogOpen={dialogOpen}
+                />,
+              )
+            }
+          >
             <DropdownMenuItem>
               <File />
               Upload New File
             </DropdownMenuItem>
           </DialogTrigger>
-
         </DropdownMenuContent>
       </DropdownMenu>
 

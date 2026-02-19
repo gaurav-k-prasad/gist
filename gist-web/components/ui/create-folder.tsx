@@ -13,7 +13,7 @@ import { Field, FieldGroup } from "./field";
 import { Input } from "./input";
 import { Label } from "./label";
 
-export function CreateFolder({
+export default function CreateFolder({
   folderDetails,
   setFolder,
 }: {

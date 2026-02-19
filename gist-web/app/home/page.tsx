@@ -39,26 +39,6 @@ export default function Folder() {
         setFiles(res.data.files);
         setFolderInfo(res.data.currFolder);
         if (!rootFolderInfo) setRootFolderInfo(res.data.currFolder);
-
-        // ! WARNING
-        setFiles([
-          {
-            folderId: 1,
-            id: 3,
-            name: "new file",
-            path: "/path",
-            s3url: "/s3",
-            userId: 3,
-          },
-          {
-            folderId: 1,
-            id: 4,
-            name: "new file2",
-            path: "/path",
-            s3url: "/s3",
-            userId: 3,
-          },
-        ]);
       } catch {
         toast.error("Data fetching failed");
       }
@@ -68,6 +48,8 @@ export default function Folder() {
       f();
     }
   }, [folderId, setFolders, setFiles, status, rootFolderInfo]);
+
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const rootId = session?.user?.rootFolderId;
@@ -83,7 +65,7 @@ export default function Folder() {
 
   return (
     <SidebarProvider>
-      <Dialog>
+      <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
         <AppSidebar
           folderInfo={rootFolderInfo}
           folders={folders}
@@ -111,8 +93,10 @@ export default function Folder() {
               folderDetails={{
                 folderId: folderInfo?.id || -1,
                 folderName: folderInfo?.name || "Invalid",
+                parentFiles: files,
               }}
               setFilesFolders={{ setFiles, setFolders }}
+              dialogOpen={setOpen}
             />
           </div>
         </SidebarInset>
