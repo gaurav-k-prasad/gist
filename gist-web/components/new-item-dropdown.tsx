@@ -47,15 +47,6 @@ export default function NewItemDropdown({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent className="m-4">
-          <DialogTrigger className="w-full">
-            <DropdownMenuItem>
-              <File />
-              Create New File
-            </DropdownMenuItem>
-          </DialogTrigger>
-
-          <br />
-
           <DialogTrigger
             className="w-full"
             onClick={() =>

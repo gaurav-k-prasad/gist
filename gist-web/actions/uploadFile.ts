@@ -22,7 +22,6 @@ const s3 = new S3Client({
 export async function getSignedURL(type: string, size: number, userId: string) {
   const putObjectCommand = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME!,
-    // ! WARNING
     Key: generateFileName(),
     ContentType: type,
     ContentLength: size,

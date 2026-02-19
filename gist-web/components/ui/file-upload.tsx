@@ -12,7 +12,12 @@ import { acceptMaxSize, acceptTypes, maxFiles } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { File as FileType, Folder as FolderType } from "@/types/files-folders";
 import { toast } from "sonner";
-import { DialogClose, DialogHeader, DialogTitle } from "./dialog";
+import {
+  DialogClose,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "./dialog";
 import { Spinner } from "./spinner";
 
 export default function FileUpload({
@@ -191,12 +196,12 @@ export default function FileUpload({
     <div className="flex flex-col">
       <DialogHeader>
         <DialogTitle>Upload file</DialogTitle>
-        <CardDescription>
+        <DialogDescription>
           Upload {count} files to{" "}
-          <div className="inline whitespace-nowrap overflow-hidden text-ellipsis">
+          <span className="inline whitespace-nowrap overflow-hidden text-ellipsis">
             {folderDetails?.folderName}
-          </div>
-        </CardDescription>
+          </span>
+        </DialogDescription>
       </DialogHeader>
       <br />
       <form onSubmit={handleSubmit}>
@@ -211,7 +216,7 @@ export default function FileUpload({
                 isDragActive
                   ? "border-primary bg-primary/10 ring-2 ring-primary/20"
                   : "border-border",
-                "mt-2 flex justify-center rounded-md border border-dashed px-6 py-20 transition-colors duration-200",
+                "mt-2 flex justify-center rounded-md border border-dashed px-6 py-6 transition-colors duration-200",
               )}
             >
               <div>
@@ -258,7 +263,7 @@ export default function FileUpload({
         </div>
         <br />
         <div className="flex items-center justify-end space-x-3">
-          <DialogClose>
+          <DialogClose asChild>
             <Button type="button" variant="outline">
               Cancel
             </Button>
