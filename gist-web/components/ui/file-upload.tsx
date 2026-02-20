@@ -4,13 +4,13 @@ import { File, Trash } from "lucide-react";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-import { getSignedURLs } from "@/actions/uploadFile";
+import { getSignedURLs } from "@/actions/fileHandling";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { acceptMaxSize, acceptTypes, maxFiles } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { File as FileType, Folder as FolderType } from "@/types/files-folders";
+import { FileType } from "@/types/files-folders";
 import { toast } from "sonner";
 import {
   DialogClose,

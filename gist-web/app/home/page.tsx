@@ -12,7 +12,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useFilesFolders } from "@/hooks/useFilesFolders";
-import { Folder as FolderType } from "@/types/files-folders";
+import { FolderType } from "@/types/files-folders";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -94,6 +94,8 @@ export default function Folder() {
             folders={folders}
             setFolderId={setFolderId}
             isLoading={loading}
+            setFiles={setFiles}
+            setFolders={setFolders}
           />
           <div className="fixed max-md:right-5 right-10 max-md:bottom-5 bottom-10">
             <NewItemDropdown

@@ -1,4 +1,4 @@
-import { Folder as FolderType } from "@/types/files-folders";
+import { FolderType } from "@/types/files-folders";
 import React, { Dispatch, SetStateAction } from "react";
 import {
   Breadcrumb,

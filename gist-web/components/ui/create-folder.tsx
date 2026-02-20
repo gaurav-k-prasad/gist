@@ -1,4 +1,4 @@
-import { Folder as FolderType } from "@/types/files-folders";
+import { FolderType } from "@/types/files-folders";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { Button } from "./button";

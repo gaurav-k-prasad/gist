@@ -1,6 +1,7 @@
 import { useFilesFolders } from "@/hooks/useFilesFolders";
-import { File as FileType, Folder as FolderType } from "@/types/files-folders";
+import { FileType, FolderType } from "@/types/files-folders";
 import { ChevronRight, File, Folder } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   Collapsible,
@@ -15,7 +16,6 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "./sidebar";
-import Link from "next/link";
 
 export default function SidebarFolder({
   folderInfo,

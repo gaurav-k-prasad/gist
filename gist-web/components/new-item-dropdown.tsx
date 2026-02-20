@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { File as FileType, Folder as FolderType } from "@/types/files-folders";
+import { FileType, FolderType } from "@/types/files-folders";
 import { File, Folder, Plus } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 import CreateFolder from "./ui/create-folder";

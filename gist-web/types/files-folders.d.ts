@@ -1,4 +1,4 @@
-export interface File {
+export interface FileType {
   id: number;
   name: string;
   s3url: string;
@@ -7,7 +7,7 @@ export interface File {
   userId: number;
 }
 
-export interface Folder {
+export interface FolderType {
   id: number;
   name: string;
   path: string;

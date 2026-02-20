@@ -8,7 +8,7 @@ import {
   SidebarFooter,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { File as FileType, Folder as FolderType } from "@/types/files-folders";
+import { FileType, FolderType } from "@/types/files-folders";
 import { User } from "next-auth";
 import { useSession } from "next-auth/react";
 

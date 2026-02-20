@@ -1,4 +1,4 @@
-import { File as FileType, Folder as FolderType } from "@/types/files-folders";
+import { FileType, FolderType } from "@/types/files-folders";
 import { useState } from "react";
 
 export function useFilesFolders() {

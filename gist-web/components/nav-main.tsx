@@ -1,7 +1,7 @@
 "use client";
 
 import { SidebarGroup } from "@/components/ui/sidebar";
-import { File as FileType, Folder as FolderType } from "@/types/files-folders";
+import { FileType, FolderType } from "@/types/files-folders";
 import SidebarFolder from "./ui/sidebar-folder";
 
 export function NavMain({
