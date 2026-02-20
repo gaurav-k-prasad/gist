@@ -23,6 +23,7 @@ export default function Folder() {
   const [rootFolderInfo, setRootFolderInfo] = useState<FolderType>();
   const { data: session, status } = useSession();
   const [folderId, setFolderId] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const f = async () => {
@@ -30,6 +31,7 @@ export default function Folder() {
       params.append("folderId", folderId);
 
       try {
+        setLoading(true);
         const response = await fetch(`/api/fs?folderId=${folderId}`, {
           method: "GET",
         });
@@ -38,13 +40,17 @@ export default function Folder() {
         setFolders(res.data.folders);
         setFiles(res.data.files);
         setFolderInfo(res.data.currFolder);
+
+        // only set root folder info for the root directory and never again
         if (!rootFolderInfo) setRootFolderInfo(res.data.currFolder);
       } catch {
         toast.error("Data fetching failed");
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (status === "authenticated" && folderId.length > 0) {
+    if (status === "authenticated" && folderId !== "") {
       f();
     }
   }, [folderId, setFolders, setFiles, status, rootFolderInfo]);
@@ -87,6 +93,7 @@ export default function Folder() {
             files={files}
             folders={folders}
             setFolderId={setFolderId}
+            isLoading={loading}
           />
           <div className="fixed max-md:right-5 right-10 max-md:bottom-5 bottom-10">
             <NewItemDropdown

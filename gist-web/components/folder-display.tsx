@@ -1,17 +1,28 @@
 import { File as FileType, Folder as FolderType } from "@/types/files-folders";
 import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
+import { Spinner } from "./ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 export default function FolderDisplay({
   files,
   folders,
   setFolderId,
+  isLoading,
 }: {
   files: FileType[];
   folders: FolderType[];
   setFolderId: Dispatch<SetStateAction<string>>;
+  isLoading: boolean;
 }) {
+  if (isLoading) {
+    return (
+      <div className="w-full text-center mt-5">
+        <Spinner className="mx-auto" />
+      </div>
+    );
+  }
+
   if (files.length == 0 && folders.length == 0) {
     return <div className="w-full text-center mt-5">Empty folder</div>;
   }
