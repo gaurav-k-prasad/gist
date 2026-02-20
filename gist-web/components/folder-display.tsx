@@ -1,6 +1,5 @@
 import { File as FileType, Folder as FolderType } from "@/types/files-folders";
 import Image from "next/image";
-import Link from "next/link";
 import { Dispatch, SetStateAction } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
@@ -13,6 +12,10 @@ export default function FolderDisplay({
   folders: FolderType[];
   setFolderId: Dispatch<SetStateAction<string>>;
 }) {
+  if (files.length == 0 && folders.length == 0) {
+    return <div className="w-full text-center mt-5">Empty folder</div>;
+  }
+
   return (
     <div className="grid p-5 gap-5 grid-cols-[repeat(auto-fill,minmax(150px,1fr))]">
       {/* FOLDERS */}
