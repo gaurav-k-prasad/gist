@@ -86,6 +86,8 @@ export default function SidebarFolder({
     return <>Loading...</>;
   }
 
+  const isCurrentFolderOpen = folderId === folderInfo.id.toString();
+
   return (
     <SidebarMenu>
       <Collapsible
@@ -96,8 +98,13 @@ export default function SidebarFolder({
         }}
       >
         <SidebarMenuItem>
-          <div className="flex items-center">
-            <SidebarMenuButton tooltip={folderInfo?.name} className="py-1 grow">
+          <div
+            className={`${isCurrentFolderOpen && "bg-gray-200"} rounded-md flex items-center`}
+          >
+            <SidebarMenuButton
+              tooltip={folderInfo?.name}
+              className={`py-1 grow ${isCurrentFolderOpen ? "hover:bg-gray-200 active:bg-gray-200" : ""}`}
+            >
               <Folder />
               <span
                 className={`w-full overflow-hidden text-ellipsis  ${folderId !== folderInfo.id.toString() ? "cursor-pointer" : ""}`}
@@ -111,7 +118,7 @@ export default function SidebarFolder({
 
             <CollapsibleTrigger asChild className="overflow-hidden">
               <ChevronRight
-                className={`ml-auto transition-transform duration-200 ${isOpen && "rotate-90!"} hover:bg-gray-200 rounded-full p-1`}
+                className={`ml-auto transition-transform duration-200 ${isOpen && "rotate-90!"} hover:bg-gray-300 rounded-full p-1 mr-1`}
               />
             </CollapsibleTrigger>
           </div>
