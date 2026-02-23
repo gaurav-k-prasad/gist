@@ -28,9 +28,10 @@ const s3 = new S3Client({
 });
 
 export async function getSignedURL(type: string, size: number, userId: string) {
+  const key = generateFileName();
   const putObjectCommand = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME!,
-    Key: generateFileName(),
+    Key: key,
     ContentType: type,
     ContentLength: size,
     Metadata: {
@@ -42,7 +43,7 @@ export async function getSignedURL(type: string, size: number, userId: string) {
     expiresIn: 60,
   });
 
-  return signedUrl;
+  return { signedUrl, key };
 }
 
 export async function getSignedURLs(types: string[], sizes: number[]) {
@@ -75,8 +76,8 @@ export async function getSignedURLs(types: string[], sizes: number[]) {
       );
     }
 
-    const signedUrls = await Promise.all(signedUrlsP);
-    return { success: true, urls: signedUrls };
+    const signedUrlsKeys = await Promise.all(signedUrlsP);
+    return { success: true, urls: signedUrlsKeys };
   } catch {
     return { success: false, message: "Signed url creation failed" };
   }
@@ -90,7 +91,7 @@ export async function deleteFolder(folderId: number, ancestorPathIds: string) {
 
   try {
     const doesMainFolderExist = await db
-      .select()
+      .select({id: folders.id})
       .from(folders)
       .where(and(eq(folders.userId, user.user.dbId), eq(folders.id, folderId)));
 
@@ -108,7 +109,7 @@ export async function deleteFolder(folderId: number, ancestorPathIds: string) {
       const deleteFilesP = tx
         .delete(files)
         .where(like(files.path, `${ancestorPathIds + "/" + folderId}%`))
-        .returning();
+        .returning({ s3url: files.s3url });
 
       const [deleteFiles] = await Promise.all([
         deleteFilesP,
@@ -152,7 +153,7 @@ export async function deleteFile(fileId: number) {
     const res = await db
       .delete(files)
       .where(and(eq(files.id, fileId), eq(files.userId, user.user.dbId)))
-      .returning();
+      .returning({s3url: files.s3url});
 
     // if no deleted file that means user doesn't have that file
     if (res.length === 0) {

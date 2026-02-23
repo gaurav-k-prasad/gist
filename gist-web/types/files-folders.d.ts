@@ -2,6 +2,7 @@ export interface FileType {
   id: number;
   name: string;
   s3url: string;
+  s3key: string;
   path: string;
   folderId: number;
   userId: number;

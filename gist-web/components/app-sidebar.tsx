@@ -11,18 +11,21 @@ import {
 import { FileType, FolderType } from "@/types/files-folders";
 import { User } from "next-auth";
 import { useSession } from "next-auth/react";
+import { Dispatch, SetStateAction } from "react";
 
 export function AppSidebar({
   folderInfo,
   folders,
   files,
-  currFolderId,
+  folderId,
+  setFolderId,
   ...props
 }: {
   folderInfo?: FolderType;
   folders: FolderType[];
   files: FileType[];
-  currFolderId: string;
+  folderId: string;
+  setFolderId: Dispatch<SetStateAction<string>>
 } & React.ComponentProps<typeof Sidebar>) {
   const { data: session, status } = useSession();
 
@@ -44,7 +47,8 @@ export function AppSidebar({
           folderInfo={folderInfo}
           files={files}
           folders={folders}
-          currFolderId={currFolderId}
+          folderId={folderId}
+          setFolderId={setFolderId}
         />
       </SidebarContent>
       <SidebarFooter>

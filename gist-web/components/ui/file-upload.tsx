@@ -8,7 +8,12 @@ import { getSignedURLs } from "@/actions/fileHandling";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { acceptMaxSize, acceptTypes, maxFiles } from "@/lib/constants";
+import {
+  acceptMaxSize,
+  acceptTypes,
+  maxFiles,
+  maxMbSize,
+} from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { FileType } from "@/types/files-folders";
 import { toast } from "sonner";
@@ -19,6 +24,7 @@ import {
   DialogTitle,
 } from "./dialog";
 import { Spinner } from "./spinner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 export default function FileUpload({
   folderDetails,
@@ -81,7 +87,7 @@ export default function FileUpload({
 
       for (const { name } of folderDetails.parentFiles) {
         if (uploadFilesSet.has(name)) {
-          toast.error(`File {name} already exists`);
+          toast.error(`File ${name} already exists`);
           return;
         }
       }
@@ -98,28 +104,15 @@ export default function FileUpload({
       const s3UploadsP = [];
 
       try {
-        for (let i = 0; i < urls.length; i++) {
-          s3UploadsP.push(
-            fetch(urls[i], {
-              method: "PUT",
-              body: uploadFiles[i],
-              headers: {
-                "Content-Type": uploadFiles[i].type,
-              },
-            }),
-          );
-        }
-
-        await Promise.all(s3UploadsP);
-
         const filesDetails = [];
         for (let i = 0; i < urls.length; i++) {
           filesDetails.push({
             name: uploadFiles[i].name,
-            s3url: signedUrl.urls[i].split("?")[0],
+            s3url: signedUrl.urls[i].signedUrl.split("?")[0],
+            key: signedUrl.urls[i].key,
           });
         }
-
+        // first upload all the files to the database to avoid race condition
         const response = await (
           await fetch("/api/fs/files", {
             method: "POST",
@@ -129,6 +122,21 @@ export default function FileUpload({
             }),
           })
         ).json();
+
+        for (let i = 0; i < urls.length; i++) {
+          s3UploadsP.push(
+            fetch(urls[i].signedUrl, {
+              method: "PUT",
+              body: uploadFiles[i],
+              headers: {
+                "Content-Type": uploadFiles[i].type,
+              },
+            }),
+          );
+        }
+
+        // then insert the data to s3 and trigger the event
+        await Promise.all(s3UploadsP);
 
         if (!response.success) {
           toast.error(response.message);
@@ -156,32 +164,39 @@ export default function FileUpload({
   const filesList = uploadFiles.map((file) => (
     <li key={file.name} className="relative">
       <Card className="relative p-4">
-        <div className="absolute right-4 top-1/2 -translate-y-1/2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            aria-label="Remove file"
-            onClick={() =>
-              setUploadFiles((prevFiles) =>
-                prevFiles.filter((prevFile) => prevFile.name !== file.name),
-              )
-            }
-          >
-            <Trash className="h-5 w-5" aria-hidden={true} />
-          </Button>
-        </div>
-        <CardContent className="flex items-center space-x-3 p-0">
+        <CardContent className="flex w-full items-center space-x-3 p-0">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
             <File className="h-5 w-5 text-foreground" aria-hidden={true} />
           </span>
-          <div>
-            <p className="text-pretty font-medium text-foreground">
-              {file.name}
+
+          <div className="flex-1 min-w-0">
+            <p className="truncate font-medium text-foreground">
+              <Tooltip>
+                <TooltipTrigger>
+                  {file.name}
+                </TooltipTrigger>
+                <TooltipContent>{file.name}</TooltipContent>
+              </Tooltip>
             </p>
             <p className="text-pretty mt-0.5 text-sm text-muted-foreground">
               {file.size} bytes
             </p>
+          </div>
+
+          <div className="shrink-0">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Remove file"
+              onClick={() =>
+                setUploadFiles((prevFiles) =>
+                  prevFiles.filter((prevFile) => prevFile.name !== file.name),
+                )
+              }
+            >
+              <Trash className="h-5 w-5" aria-hidden={true} />
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -246,7 +261,9 @@ export default function FileUpload({
 
             <p className="text-pretty mt-2 text-sm leading-5 text-muted-foreground sm:flex sm:items-center sm:justify-between">
               <span>Only .jpg, .jpeg, .png files allowed</span>
-              <span className="pl-1 sm:pl-0">Max. size per file: 2MB</span>
+              <span className="pl-1 sm:pl-0">
+                Max. size per file: {maxMbSize}MB
+              </span>
             </p>
 
             {filesList.length > 0 && (

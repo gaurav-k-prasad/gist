@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
-import { folders, users } from "./db/schema";
+import { folders, publicUserType, users } from "./db/schema";
 import { db } from "./utils/db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -61,7 +61,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     email: user.email!,
                     name: user.name!,
                   })
-                  .returning()
+                  .returning(publicUserType)
               )[0];
 
               const newFolder = (
@@ -74,7 +74,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     parentFolder: null,
                     ancestorsIds: "", // no ancestors
                   })
-                  .returning()
+                  .returning({ id: folders.id })
               )[0];
 
               await tx

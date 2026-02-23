@@ -1,0 +1,1 @@
+ALTER TABLE "files" ADD CONSTRAINT "files_s3key_key" UNIQUE("s3key");

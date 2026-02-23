@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { files, folders } from "@/db/schema";
+import { files, folders, publicFileType, publicFolderType } from "@/db/schema";
 import { db } from "@/utils/db";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
   try {
     // Check if the folder id even exists for the given user
     const currentFolder = await db
-      .select()
+      .select(publicFolderType)
       .from(folders)
       .where(and(eq(folders.userId, user.user.dbId), eq(folders.id, folderId)));
 
@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
     }
 
     const foldersData = db
-      .select()
+      .select(publicFolderType)
       .from(folders)
       .where(
         and(
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
       );
 
     const filesData = db
-      .select()
+      .select(publicFileType)
       .from(files)
       .where(
         and(eq(files.userId, user.user.dbId), eq(files.folderId, folderId)),

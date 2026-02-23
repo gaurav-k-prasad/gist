@@ -1,5 +1,6 @@
+import { FileType } from "@/types/files-folders";
 import { defineRelations } from "drizzle-orm";
-import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, vector } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -8,6 +9,13 @@ export const users = pgTable("users", {
 
   rootFolderId: integer("root_folder_id"),
 });
+
+export const publicUserType = {
+  id: users.id,
+  name: users.name,
+  email: users.email,
+  rootFolderId: users.rootFolderId,
+};
 
 export const folders = pgTable("folders", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -21,15 +29,36 @@ export const folders = pgTable("folders", {
   ancestorsIds: varchar("ancestors_ids").notNull(),
 });
 
+export const publicFolderType = {
+  id: folders.id,
+  name: folders.name,
+  path: folders.path,
+  userId: folders.userId,
+  parentFolder: folders.parentFolder,
+  ancestorsIds: folders.ancestorsIds,
+};
+
 export const files = pgTable("files", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
   s3url: varchar().notNull(),
+  s3key: varchar().notNull().unique(),
   path: varchar().notNull(),
 
   folderId: integer("folder_id").notNull(),
   userId: integer("user_id").notNull(),
+  embedding: vector("embedding", { dimensions: 512 }),
 });
+
+export const publicFileType = {
+  id: files.id,
+  name: files.name,
+  s3url: files.s3url,
+  s3key: files.s3key,
+  path: files.path,
+  folderId: files.folderId,
+  userId: files.userId,
+};
 
 export const relations = defineRelations({ users, folders, files }, (r) => ({
   users: {

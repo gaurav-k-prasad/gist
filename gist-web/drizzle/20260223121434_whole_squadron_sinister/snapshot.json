@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "b313e9b7-77a1-4e5c-8001-99ad359aac20",
+  "id": "5113869e-5235-43fe-94e2-870f22083d5f",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -80,6 +80,19 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "name": "s3key",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "files"
+    },
+    {
+      "type": "varchar",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
       "name": "path",
       "entityType": "columns",
       "schema": "public",
@@ -107,6 +120,19 @@
       "generated": null,
       "identity": null,
       "name": "user_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "files"
+    },
+    {
+      "type": "vector(512)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "embedding",
       "entityType": "columns",
       "schema": "public",
       "table": "files"

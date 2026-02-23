@@ -1,8 +1,7 @@
 import { useFilesFolders } from "@/hooks/useFilesFolders";
 import { FileType, FolderType } from "@/types/files-folders";
 import { ChevronRight, File, Folder } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -21,12 +20,14 @@ export default function SidebarFolder({
   folderInfo,
   currFolders,
   currFiles,
-  currFolderId,
+  folderId,
+  setFolderId,
 }: {
   folderInfo?: FolderType;
   currFolders: FolderType[];
   currFiles: FileType[];
-  currFolderId: string;
+  folderId: string;
+  setFolderId: Dispatch<SetStateAction<string>>;
 }) {
   const { files, folders, setFiles, setFolders } = useFilesFolders();
   const [isOpen, setIsOpen] = useState(false);
@@ -63,7 +64,7 @@ export default function SidebarFolder({
       (currFolders.length !== folders.length ||
         currFiles.length !== files.length) &&
       folderInfo &&
-      folderInfo.id.toString() === currFolderId &&
+      folderInfo.id.toString() === folderId &&
       !isLoading
     ) {
       setFolders(currFolders);
@@ -95,17 +96,26 @@ export default function SidebarFolder({
         }}
       >
         <SidebarMenuItem>
-          <CollapsibleTrigger asChild className="w-full overflow-hidden">
-            <SidebarMenuButton tooltip={folderInfo?.name}>
+          <div className="flex items-center">
+            <SidebarMenuButton tooltip={folderInfo?.name} className="py-1 grow">
               <Folder />
-              <span className="w-full overflow-hidden text-ellipsis">
+              <span
+                className={`w-full overflow-hidden text-ellipsis  ${folderId !== folderInfo.id.toString() ? "cursor-pointer" : ""}`}
+                onClick={() => {
+                  setFolderId(folderInfo.id.toString());
+                }}
+              >
                 {folderInfo.name}
               </span>
-              <ChevronRight
-                className={`ml-auto transition-transform duration-200 ${isOpen && "rotate-90!"}`}
-              />
             </SidebarMenuButton>
-          </CollapsibleTrigger>
+
+            <CollapsibleTrigger asChild className="overflow-hidden">
+              <ChevronRight
+                className={`ml-auto transition-transform duration-200 ${isOpen && "rotate-90!"} hover:bg-gray-200 rounded-full p-1`}
+              />
+            </CollapsibleTrigger>
+          </div>
+
           <CollapsibleContent>
             <SidebarMenuSub className="mr-0 pr-0">
               {folders.map((subItem) => {
@@ -115,20 +125,19 @@ export default function SidebarFolder({
                     folderInfo={subItem}
                     currFiles={currFiles}
                     currFolders={currFolders}
-                    currFolderId={currFolderId}
+                    folderId={folderId}
+                    setFolderId={setFolderId}
                   />
                 );
               })}
 
               {files.map((subItem) => (
                 <SidebarMenuSubItem key={subItem.id + "-file"}>
-                  <SidebarMenuSubButton asChild>
-                    <div>
-                      <File />
-                      <Link href={subItem.s3url}>
-                        <span>{subItem.name}</span>
-                      </Link>
-                    </div>
+                  <SidebarMenuSubButton>
+                    <File />
+                    <span className="w-full overflow-hidden text-ellipsis pr-3">
+                      {subItem.name}
+                    </span>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
               ))}

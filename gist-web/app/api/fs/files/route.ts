@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { files, folders } from "@/db/schema";
+import { files, folders, publicFileType } from "@/db/schema";
 import { db } from "@/utils/db";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   try {
     // Find if there exists the parent folder
     const parentFolderP = db
-      .select()
+      .select({ id: folders.id, ancestorsIds: folders.ancestorsIds })
       .from(folders)
       .where(
         and(eq(folders.userId, user.user.dbId), eq(folders.id, parentFolderId)),
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     // Fetch all the files in current folder to see if there is any other file with same name
     const parentFilesP = db
-      .select()
+      .select({ name: files.name })
       .from(files)
       .where(
         and(
@@ -88,17 +88,28 @@ export async function POST(req: NextRequest) {
     type FileInsertType = typeof files.$inferInsert;
     const insertValues: FileInsertType[] = [];
 
+    let path;
+    if (parentFolder[0].ancestorsIds !== "") {
+      path = parentFolder[0].ancestorsIds + "/" + parentFolderId.toString();
+    } else {
+      path = parentFolderId.toString();
+    }
+
     for (const fileDetail of filesDetails) {
       insertValues.push({
         folderId: parentFolderId,
         name: fileDetail.name,
-        path: parentFolder[0].ancestorsIds + "/" + parentFolderId.toString(),
+        path: path,
         s3url: fileDetail.s3url,
+        s3key: fileDetail.key,
         userId: user.user.dbId,
       });
     }
 
-    const data = await db.insert(files).values(insertValues).returning();
+    const data = await db
+      .insert(files)
+      .values(insertValues)
+      .returning(publicFileType);
 
     return NextResponse.json({ success: true, data }, { status: 200 });
   } catch {

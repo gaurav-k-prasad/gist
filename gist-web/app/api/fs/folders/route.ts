@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { folders } from "@/db/schema";
+import { folders, publicFolderType } from "@/db/schema";
 import { db } from "@/utils/db";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   try {
     // Find if there exists the parent folder
     const parentFolder = db
-      .select()
+      .select({ ancestorsIds: folders.ancestorsIds, path: folders.path })
       .from(folders)
       .where(
         and(eq(folders.userId, user.user.dbId), eq(folders.id, parentFolderId)),
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     // Find if there already exists a folder with same name
     const folder = db
-      .select()
+      .select({ name: folders.name })
       .from(folders)
       .where(
         and(
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
         parentFolder: parentFolderId,
         ancestorsIds: ancestors,
       })
-      .returning();
+      .returning(publicFolderType);
 
     return NextResponse.json(
       { success: true, newFolder: newFolder[0] },
