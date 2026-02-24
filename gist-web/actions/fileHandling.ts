@@ -22,8 +22,8 @@ const generateFileName = (bytes = 32) =>
 const s3 = new S3Client({
   region: process.env.AWS_BUCKET_REGION!,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY!,
-    secretAccessKey: process.env.AWS_SECRET_KEY!,
+    accessKeyId: process.env.AWS_RW_S3_ACCESS_KEY!,
+    secretAccessKey: process.env.AWS_RW_S3_SECRET_KEY!,
   },
 });
 
@@ -78,7 +78,8 @@ export async function getSignedURLs(types: string[], sizes: number[]) {
 
     const signedUrlsKeys = await Promise.all(signedUrlsP);
     return { success: true, urls: signedUrlsKeys };
-  } catch {
+  } catch (e) {
+    console.error("Signed url creation failed: ", e)
     return { success: false, message: "Signed url creation failed" };
   }
 }
@@ -138,7 +139,7 @@ export async function deleteFolder(folderId: number, ancestorPathIds: string) {
     }
     return { success: true };
   } catch (e) {
-    console.error(e);
+    console.error("Folder deletion failed:", e);
     return { success: false, message: "Error deleting folder" };
   }
 }
@@ -169,6 +170,7 @@ export async function deleteFile(fileId: number) {
 
     return { success: true };
   } catch (e) {
+    console.error("File deletion failed:", e);
     return { success: false, message: "Deletion failed" };
   }
 }
