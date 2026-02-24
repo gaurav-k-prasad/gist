@@ -254,7 +254,7 @@ export default function FileUpload({
                 <h4 className="text-balance mt-6 font-medium text-foreground">
                   File(s) to upload
                 </h4>
-                <ul role="list" className="mt-4 space-y-4">
+                <ul role="list" className="mt-4 space-y-4 h-30 overflow-scroll">
                   {filesList}
                 </ul>
               </>

@@ -11,5 +11,6 @@
       "database": "gist",
       "username": "postgres"
     }
-  ]
+  ],
+  "cSpell.words": ["hnsw"]
 }

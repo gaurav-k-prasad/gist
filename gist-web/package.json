@@ -12,8 +12,10 @@
     "db:migrate": "npx drizzle-kit migrate"
   },
   "dependencies": {
+    "@aws-crypto/sha256-js": "^5.2.0",
     "@aws-sdk/client-s3": "^3.993.0",
     "@aws-sdk/s3-request-presigner": "^3.993.0",
+    "@aws-sdk/signature-v4": "^3.370.0",
     "@hookform/resolvers": "^5.2.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
