@@ -1,0 +1,7 @@
+pydantic==2.12.5
+requests==2.32.5
+ftfy==6.3.1
+regex==2026.2.19
+numpy>=1.26.0,<2.0.0
+onnxruntime>=1.16.0
+supabase
