@@ -16,12 +16,14 @@ import { Label } from "./label";
 export default function CreateFolder({
   folderDetails,
   setFolder,
+  setFolderId,
 }: {
   folderDetails: {
     folderName: string;
     folderId: number;
   };
   setFolder: Dispatch<SetStateAction<FolderType[]>>;
+  setFolderId: Dispatch<SetStateAction<string>>;
 }) {
   return (
     <form
@@ -44,6 +46,7 @@ export default function CreateFolder({
             toast.error(response.message);
           } else {
             setFolder((prev) => [...prev, response.newFolder]);
+            setFolderId(response.newFolder.id)
             toast.success("Folder created successfully");
           }
         } catch (e) {

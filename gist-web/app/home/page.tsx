@@ -5,6 +5,7 @@ import FolderBreadcrumbs from "@/components/folder-breadcrumbs";
 import FolderDisplay from "@/components/folder-display";
 import NewItemDropdown from "@/components/new-item-dropdown";
 import { Dialog } from "@/components/ui/dialog";
+import SearchDialog from "@/components/search-dialog";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -55,8 +56,6 @@ export default function Folder() {
     }
   }, [folderId, setFolders, setFiles, status, rootFolderInfo]);
 
-  const [open, setOpen] = useState(false);
-
   useEffect(() => {
     const rootId = session?.user?.rootFolderId;
     if (status === "authenticated" && rootId !== undefined && rootId !== null) {
@@ -71,46 +70,47 @@ export default function Folder() {
 
   return (
     <SidebarProvider>
-      <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
-        <AppSidebar
-          folderInfo={rootFolderInfo}
-          folders={folders}
-          files={files}
-          folderId={folderId}
-          setFolderId={setFolderId}
-        />
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b">
-            <div className="flex items-center gap-2 px-3">
-              <SidebarTrigger />
-              <Separator orientation="vertical" className="mr-2 h-4" />
-              <FolderBreadcrumbs
-                currFolder={folderInfo}
-                setFolderId={setFolderId}
-              />
-            </div>
-          </header>
-          <FolderDisplay
-            files={files}
-            folders={folders}
-            setFolderId={setFolderId}
-            isLoading={loading}
-            setFiles={setFiles}
-            setFolders={setFolders}
-          />
-          <div className="fixed max-md:right-5 right-10 max-md:bottom-5 bottom-10">
-            <NewItemDropdown
-              folderDetails={{
-                folderId: folderInfo?.id || -1,
-                folderName: folderInfo?.name || "Invalid",
-                parentFiles: files,
-              }}
-              setFilesFolders={{ setFiles, setFolders }}
-              dialogOpen={setOpen}
+      <AppSidebar
+        folderInfo={rootFolderInfo}
+        folders={folders}
+        files={files}
+        folderId={folderId}
+        setFolderId={setFolderId}
+      />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b justify-between">
+          <div className="flex items-center gap-2 px-3">
+            <SidebarTrigger />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <FolderBreadcrumbs
+              currFolder={folderInfo}
+              setFolderId={setFolderId}
             />
           </div>
-        </SidebarInset>
-      </Dialog>
+          <div className="mx-6 hover:bg-gray-200 rounded-xl">
+            <SearchDialog files={files} />
+          </div>
+        </header>
+        <FolderDisplay
+          files={files}
+          folders={folders}
+          setFolderId={setFolderId}
+          isLoading={loading}
+          setFiles={setFiles}
+          setFolders={setFolders}
+        />
+        <div className="fixed max-md:right-5 right-10 max-md:bottom-5 bottom-10">
+          <NewItemDropdown
+            folderDetails={{
+              folderId: folderInfo?.id || -1,
+              folderName: folderInfo?.name || "Invalid",
+              parentFiles: files,
+            }}
+            setFilesFolders={{ setFiles, setFolders }}
+            setFolderId={setFolderId}
+          />
+        </div>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

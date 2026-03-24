@@ -11,13 +11,13 @@ import { FileType, FolderType } from "@/types/files-folders";
 import { File, Folder, Plus } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 import CreateFolder from "./ui/create-folder";
-import { DialogContent, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import FileUpload from "./ui/file-upload";
 
 export default function NewItemDropdown({
   folderDetails,
   setFilesFolders,
-  dialogOpen,
+  setFolderId,
 }: {
   folderDetails: {
     folderName: string;
@@ -28,17 +28,20 @@ export default function NewItemDropdown({
     setFiles: Dispatch<SetStateAction<FileType[]>>;
     setFolders: Dispatch<SetStateAction<FolderType[]>>;
   };
-  dialogOpen: Dispatch<SetStateAction<boolean>>;
+  setFolderId: Dispatch<SetStateAction<string>>;
 }) {
   const [create, setCreate] = useState(
     <CreateFolder
       folderDetails={folderDetails}
       setFolder={setFilesFolders.setFolders}
+      setFolderId={setFolderId}
     />,
   );
 
+  const [open, setOpen] = useState(false);
+
   return (
-    <>
+    <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="hover:bg-green-300 rounded-2xl p-1 duration-300 border-2 border-green-600 bg-green-200">
@@ -54,6 +57,7 @@ export default function NewItemDropdown({
                 <CreateFolder
                   folderDetails={folderDetails}
                   setFolder={setFilesFolders.setFolders}
+                  setFolderId={setFolderId}
                 />,
               )
             }
@@ -73,7 +77,7 @@ export default function NewItemDropdown({
                 <FileUpload
                   folderDetails={folderDetails}
                   setFiles={setFilesFolders.setFiles}
-                  dialogOpen={dialogOpen}
+                  dialogOpen={setOpen}
                 />,
               )
             }
@@ -87,6 +91,6 @@ export default function NewItemDropdown({
       </DropdownMenu>
 
       <DialogContent>{create}</DialogContent>
-    </>
+    </Dialog>
   );
 }

@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
   const parentFolderId = parseInt(parentFolder);
   if (!parentFolderId) {
     return NextResponse.json(
-      { success: false, message: "Invalid folderId" },
       { status: 400 },
     );
   }
